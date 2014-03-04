@@ -26,36 +26,20 @@ exports.searchBeer = function(req, res) {
 }
 
 exports.getBeer = function(req, res) {
-	console.log(req.query);
+	console.log(req.params.id);
 
-	ba.beerPage(req.query.q, function(response) {
-		baData =response[0];
+	var url = "http://api.brewerydb.com/v2/beer/" + req.params.id + "?key=c6343da45bea734e743c5da939d5e649";
 
-		console.log(baData);
+	console.log("BreweryDB Request: " + url);
 
-		// Populate object to be returned
-		returnData = new Object();
-		returnData.brewery_name = baData.brewery_name;
-		returnData.beer_name = baData.beer_name;
-		returnData.ba_score = baData.ba_score;
+	request(url, function (error, response, body) {
 
-		console.log("returnData: " + returnData);
-		/*
-		var url = "http://api.brewerydb.com/v2/search?key=c6343da45bea734e743c5da939d5e649&q=" + encodeURIComponent(baData.brewery_name + baData.beer_name) + "&type=beer";
+		var breweryDbData = JSON.parse(body);
 
-		console.log("BreweryDB Request: " + url);
+		console.log(breweryDbData.data);
 
-    	request(url, function (error, response, body) {
+		res.send(breweryDbData.data);
 
-    		var breweryDbData = JSON.parse(body);
+	});	
 
-    		console.log(breweryDbData.data[0]);
-
-			res.send(returnData);
-
-    	});
-		*/
-
-		res.send(returnData);
-	});
 }

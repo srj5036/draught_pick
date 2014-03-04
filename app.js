@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/search', beer.searchBeer);
 
 // Get beer info
-app.get('/beer', beer.getBeer);
+app.get('/beer/:id', beer.getBeer);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
