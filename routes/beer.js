@@ -2,33 +2,48 @@ var ba = require('beer-advocate-api');
 var request = require('request')
 
 exports.searchBeer = function(req, res) {
-	
-	var url = "http://api.brewerydb.com/v2/search?key=c6343da45bea734e743c5da939d5e649&q=" + req.query.q + "&type=beer";
+	console.log('Name: ' + req.query.name);
+	console.log('UPC: ' + req.query.upc);
 
-	console.log("BreweryDB Request: " + url);
+	if (req.query.name !== undefined)
+	{
+		var url = "http://api.brewerydb.com/v2/search?key=c6343da45bea734e743c5da939d5e649&q=" + req.query.name + "&type=beer";
 
-	request(url, function (error, response, body) {
+		console.log("BreweryDB Request: " + url);
 
-		var breweryDbData = JSON.parse(body);
+		request(url, function (error, response, body) {
 
-		console.log(body);
+			var breweryDbData = JSON.parse(body);
 
-		res.send(body);
+			console.log(JSON.stringify(breweryDbData, undefined, 2));
 
-	});
+			res.send(body);
 
-	/*ba.beerSearch(req.query.q, function(beers) {
+		});
+	}
+	else if (req.query.upc !== undefined)
+	{
+		var url = "http://api.brewerydb.com/v2/search/upc?key=c6343da45bea734e743c5da939d5e649&code=" + req.query.upc + "&type=beer";
 
-    	console.log(req.query.q);
+		console.log("BreweryDB Request: " + url);
 
-    	res.send(beers);
-    });*/
+		request(url, function (error, response, body) {
+
+			var breweryDbData = JSON.parse(body);
+
+			console.log(JSON.stringify(breweryDbData, undefined, 2));
+
+			res.send(body);
+
+		});
+	}
 }
 
 exports.getBeer = function(req, res) {
 	console.log(req.params.id);
 
-	var url = "http://api.brewerydb.com/v2/beer/" + req.params.id + "?key=c6343da45bea734e743c5da939d5e649";
+	var returnData = new Object();
+	var url = "http://api.brewerydb.com/v2/beer/" + req.params.id + "?key=c6343da45bea734e743c5da939d5e649&withBreweries=Y";
 
 	console.log("BreweryDB Request: " + url);
 
@@ -36,9 +51,34 @@ exports.getBeer = function(req, res) {
 
 		var breweryDbData = JSON.parse(body);
 
-		console.log(breweryDbData.data);
+		breweryDbData = breweryDbData.data;
 
-		res.send(breweryDbData.data);
+		console.log(breweryDbData);
+
+		ba.beerSearch(breweryDbData.name, function(beers) {
+
+	    	console.log(breweryDbData.name);
+
+	    	console.log(beers);
+
+	    	// Assume first result on BA is the correct beer
+	    	ba.beerPage(beers[0].beer_url, function(baData) {
+
+				console.log(baData);
+
+				returnData.name = breweryDbData.name;
+				returnData.brewery = breweryDbData.breweries[0].name;
+				returnData.style = breweryDbData.style.name;
+				returnData.description = breweryDbData.description;
+				returnData.abv = breweryDbData.abv;
+				returnData.ibu = breweryDbData.ibu;
+				returnData.ba_score = baData[0].ba_score;
+				returnData.ba_ratings = baData[0].ratings;
+
+				res.send(returnData);
+			});
+
+	    });
 
 	});	
 
