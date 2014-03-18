@@ -9,7 +9,7 @@ $(document).ready(function(){
 		if (beer_search != "") {
 
 			// GET request to search for beer
-			$.get("/search?q=" + beer_search, function(data){
+			$.get("/search?name=" + beer_search, function(data){
 				displaySearchResults(data);
 			});
 
