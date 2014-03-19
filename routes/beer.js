@@ -7,7 +7,7 @@ exports.searchBeer = function(req, res) {
 
 	if (req.query.name !== undefined)
 	{
-		var url = "http://api.brewerydb.com/v2/search?key=c6343da45bea734e743c5da939d5e649&q=" + req.query.name + "&type=beer";
+		var url = "http://api.brewerydb.com/v2/search?key=c6343da45bea734e743c5da939d5e649&withBreweries=Y&q=" + req.query.name + "&type=beer";
 
 		console.log("BreweryDB Request: " + url);
 
@@ -23,7 +23,7 @@ exports.searchBeer = function(req, res) {
 	}
 	else if (req.query.upc !== undefined)
 	{
-		var url = "http://api.brewerydb.com/v2/search/upc?key=c6343da45bea734e743c5da939d5e649&code=" + req.query.upc + "&type=beer";
+		var url = "http://api.brewerydb.com/v2/search/upc?key=c6343da45bea734e743c5da939d5e649&withBreweries=Y&code=" + req.query.upc + "&type=beer";
 
 		console.log("BreweryDB Request: " + url);
 
